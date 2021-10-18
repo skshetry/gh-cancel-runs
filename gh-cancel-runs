@@ -6,7 +6,7 @@ then
 fi
 
 # from: https://stackoverflow.com/a/60766849/5693170
-# modified to be used as a gh extension
+# modified to be used as a gh extension to avoid specifying tokens
 
 # Using tee to disable pager
 ids=($(gh api repos/$1/actions/runs --jq \
