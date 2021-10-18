@@ -12,5 +12,5 @@ gh extension install skshetry/gh-cancel-runs
 ## Usage
 
 ```
-gh cancel-runs <owner>/<repo>
+gh cancel-runs [<owner>/<repo>]
 ```

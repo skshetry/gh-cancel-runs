@@ -1,21 +1,28 @@
 #!/bin/bash
 if [ $# -eq 0 ]
 then
-    echo "Usage: gh cancel-runs <owner>/<name>"
-    exit 1
+    repo=$(gh repo view --json=nameWithOwner --jq ".nameWithOwner" | tee)
+    echo "Using repo: $repo"
+else
+    repo=$1
 fi
 
 # from: https://stackoverflow.com/a/60766849/5693170
 # modified to be used as a gh extension to avoid specifying tokens
 
 # Using tee to disable pager
-ids=($(gh api repos/$1/actions/runs --jq \
+ids=($(gh api repos/$repo/actions/runs --jq \
             '.workflow_runs[] | select([.status] | inside(["in_progress", "queued"])) | .id' \
     | tee))
+
+if [ ${#ids[@]} -eq 0 ]; then
+    echo "No scheduled runs to cancel."
+    exit
+fi
 
 for id in $ids
 do
     echo "Cancelling $id"
-    gh api -X POST repos/$1/actions/runs/$id/cancel | tee
+    gh api -X POST repos/$repo/actions/runs/$id/cancel | tee
 done
 echo
